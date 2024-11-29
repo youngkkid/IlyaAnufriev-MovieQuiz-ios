@@ -4,20 +4,20 @@ final class MovieQuizViewController: UIViewController {
     // MARK: - Lifecycle
     
     // для состояния "Вопрос показан"
-    struct QuizStepViewModel{
+    private struct QuizStepViewModel{
         let image: UIImage
         let question: String
         let questionNumber: String
     }
     // для состояния "Результат квиза"
-    struct QuizResultViewModel{
+    private struct QuizResultViewModel{
         let title: String
         let text: String
         let buttonText: String
     }
     
 
-    struct QuizQuestion {
+    private struct QuizQuestion {
         // строка с названием фильма должна совпадать с названием картинки афиши из Assets
         let image: String
         let text: String
@@ -88,6 +88,7 @@ final class MovieQuizViewController: UIViewController {
         imageView.layer.borderWidth = 8
         imageView.layer.borderColor =  isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
         imageView.layer.cornerRadius = 20
+        enabldeOrNot(position: false)
     
         DispatchQueue.main.asyncAfter(deadline:.now() + 1.0) {
             self.showNextQuestionOrResult()
@@ -98,14 +99,15 @@ final class MovieQuizViewController: UIViewController {
         if currentQuestionIndex == questions.count - 1{let text = "Ваш результат: \(correctAnswers)/10"
             let viewModel = QuizResultViewModel(title: "Этот раунд окончен!", text: text, buttonText: "Сыграть ещё раз")
             show(quiz: viewModel)
-        }else
-        {currentQuestionIndex += 1
-            
-            let nextQuestion = questions[currentQuestionIndex]
+            resetBorder()
+            enabldeOrNot(position: true)
+        } else {currentQuestionIndex += 1
+        let nextQuestion = questions[currentQuestionIndex]
         let viewModel = convert(model: nextQuestion)
-            show(quiz: viewModel)
+        show(quiz: viewModel)
+        resetBorder()
+        enabldeOrNot(position: true)
         }
-        
     }
     
     private func show(quiz result: QuizResultViewModel){
@@ -123,12 +125,31 @@ final class MovieQuizViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
+    private func resetBorder() {
+        imageView.layer.borderColor = nil
+        imageView.layer.borderWidth = 0
+        imageView.layer.cornerRadius = 20
+    }
+    
+    private func enabldeOrNot(position: Bool) {
+        if position {
+            noButton.isEnabled = true
+            yesButton.isEnabled = true
+        } else {
+            noButton.isEnabled = false
+            yesButton.isEnabled = false
+        }
+    }
+    
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var textLabel: UILabel!
     @IBOutlet private var counterLabel: UILabel!
+    @IBOutlet private var noButton: UIButton!
+    @IBOutlet private var yesButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        resetBorder()
         let firstQuestion = questions[currentQuestionIndex]
         let viewMode = convert(model: firstQuestion)
         show(quiz: viewMode)
@@ -142,7 +163,7 @@ final class MovieQuizViewController: UIViewController {
             showAnswersResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
     
-    @IBAction func noButtonClicked(_ sender: Any) {
+    @IBAction private func noButtonClicked(_ sender: Any) {
         let currentQuestion = questions[currentQuestionIndex]
         let givenAnswer = false
 
