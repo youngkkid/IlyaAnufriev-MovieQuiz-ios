@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8471125E2D0D982F009D2AE6 /* QuestionFactoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8471125D2D0D982F009D2AE6 /* QuestionFactoryProtocol.swift */; };
+		847112602D0DA185009D2AE6 /* QuestionFactoryDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8471125F2D0DA185009D2AE6 /* QuestionFactoryDelegate.swift */; };
 		8472FA2A2D0CCB04008B7F06 /* QuestionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472FA292D0CCB04008B7F06 /* QuestionFactory.swift */; };
 		8472FA2D2D0CCE05008B7F06 /* QuizQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472FA2C2D0CCE05008B7F06 /* QuizQuestion.swift */; };
 		8472FA2F2D0CCED6008B7F06 /* QuizStepViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472FA2E2D0CCED6008B7F06 /* QuizStepViewMode.swift */; };
@@ -25,6 +27,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8471125D2D0D982F009D2AE6 /* QuestionFactoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionFactoryProtocol.swift; sourceTree = "<group>"; };
+		8471125F2D0DA185009D2AE6 /* QuestionFactoryDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionFactoryDelegate.swift; sourceTree = "<group>"; };
 		8472FA292D0CCB04008B7F06 /* QuestionFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionFactory.swift; sourceTree = "<group>"; };
 		8472FA2C2D0CCE05008B7F06 /* QuizQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizQuestion.swift; sourceTree = "<group>"; };
 		8472FA2E2D0CCED6008B7F06 /* QuizStepViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizStepViewMode.swift; sourceTree = "<group>"; };
@@ -73,6 +77,8 @@
 			isa = PBXGroup;
 			children = (
 				8472FA292D0CCB04008B7F06 /* QuestionFactory.swift */,
+				8471125D2D0D982F009D2AE6 /* QuestionFactoryProtocol.swift */,
+				8471125F2D0DA185009D2AE6 /* QuestionFactoryDelegate.swift */,
 			);
 			path = Serivces;
 			sourceTree = "<group>";
@@ -229,10 +235,12 @@
 				AD1ABAB62831907B00B3E448 /* MovieQuizViewController.swift in Sources */,
 				8472FA2D2D0CCE05008B7F06 /* QuizQuestion.swift in Sources */,
 				AD77F5742857F8810062FB14 /* Date+Extensions.swift in Sources */,
+				847112602D0DA185009D2AE6 /* QuestionFactoryDelegate.swift in Sources */,
 				AD1ABAB22831907B00B3E448 /* AppDelegate.swift in Sources */,
 				8472FA2A2D0CCB04008B7F06 /* QuestionFactory.swift in Sources */,
 				8472FA2F2D0CCED6008B7F06 /* QuizStepViewMode.swift in Sources */,
 				8472FA312D0CCF2E008B7F06 /* QuizResultsViewModel.swift in Sources */,
+				8471125E2D0D982F009D2AE6 /* QuestionFactoryProtocol.swift in Sources */,
 				AD1ABAB42831907B00B3E448 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
