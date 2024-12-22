@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ResultAlertPresentor {
+ class ResultAlertPresentor {
     private weak var viewController: UIViewController?
     
     init(viewController: UIViewController) {
