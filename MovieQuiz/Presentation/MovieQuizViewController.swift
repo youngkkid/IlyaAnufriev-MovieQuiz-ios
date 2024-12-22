@@ -7,8 +7,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var correctAnswers = 0
     
     private let questionsAmount: Int = 10
+    
     private var questionFactory: QuestionFactoryProtocol?
+    
     private var currentQuestion: QuizQuestion?
+    
+    private var statisticService: StatisticServiceProtocol!
+    
+    
+    
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(image: UIImage(named: model.image) ?? UIImage(), question:model.text, questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
@@ -36,9 +43,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     private func showNextQuestionOrResult () {
-        if currentQuestionIndex == questionsAmount - 1{ let text = correctAnswers == questionsAmount ? "Поздравляем, вы ответили на 10 из 10" : "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз"
-            let viewModel = QuizResultsViewModel(title: "Этот раунд окончен!", text: text, buttonText: "Сыграть ещё раз")
+        if currentQuestionIndex == questionsAmount - 1{ let text = "Ваш результат: \(correctAnswers)/10"
+            let bestGame = statisticService.bestGame
+            let formater = DateFormatter()
+            formater.dateFormat = "dd.MM.YY hh:mm"
+            let formattedDate = formater.string(from: bestGame.date)
+            let bestGameText = "Количество сыгранных квизов: \(statisticService.gamesCount)\nРекорд: \(bestGame.correct)/10 (\(formattedDate))\nСреднаяя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
+            
+            let viewModel = QuizResultsViewModel(title: "Этот раунд окончен!", text: "\(text)\n\(bestGameText)", buttonText: "Сыграть ещё раз")
             show(quiz: viewModel)
+            statisticService.store(correct: correctAnswers, total: questionsAmount)
             resetBorder()
             changeState(of: true)
         } else {currentQuestionIndex += 1
@@ -78,17 +92,17 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet private var noButton: UIButton!
     @IBOutlet private var yesButton: UIButton!
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         resetBorder()
-        
         alertPresentor = AlertPresentor(viewController: self)
-        
-        
+        statisticService = StatisticService()
         let questionFactory = QuestionFactory()
         questionFactory.delegate = self
         self.questionFactory = questionFactory
         questionFactory.requestNextQuestion()
+        
     }
     
     // MARK: - QuestionFactoryDelegate
