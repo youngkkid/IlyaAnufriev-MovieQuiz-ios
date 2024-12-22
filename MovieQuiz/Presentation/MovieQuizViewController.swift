@@ -2,7 +2,7 @@ import UIKit
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // MARK: - Lifecycle
-    private var alertPresentor: AlertPresentor?
+    private var alertPresentor: ResultAlertPresentor?
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     
@@ -96,8 +96,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         resetBorder()
-        alertPresentor = AlertPresentor(viewController: self)
-        statisticService = StatisticService()
+        alertPresentor = ResultAlertPresentor(viewController: self)
+        statisticService = StatisticServiceImplementation()
         let questionFactory = QuestionFactory()
         questionFactory.delegate = self
         self.questionFactory = questionFactory

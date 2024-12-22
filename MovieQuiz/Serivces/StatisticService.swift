@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class StatisticService: StatisticServiceProtocol {
+final class StatisticServiceImplementation: StatisticServiceProtocol {
     
     private let storage: UserDefaults = .standard
     
