@@ -76,25 +76,6 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		6113423A2B701CF8003FC2A4 /* Services */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
-		8472FA282D0CCAC4008B7F06 /* Serivces */ = {
-			isa = PBXGroup;
-			children = (
-				8472FA292D0CCB04008B7F06 /* QuestionFactory.swift */,
-				8471125D2D0D982F009D2AE6 /* QuestionFactoryProtocol.swift */,
-				8471125F2D0DA185009D2AE6 /* QuestionFactoryDelegate.swift */,
-				8428A3362D16D72C0082D9F3 /* StatisticServiceProtocol.swift */,
-				8428A33A2D16DC240082D9F3 /* StatisticService.swift */,
-			);
-			path = Serivces;
-			sourceTree = "<group>";
-		};
 		8472FA2B2D0CCDF1008B7F06 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -105,6 +86,20 @@
 				8428A3382D16D86A0082D9F3 /* GamesResult.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		84E19CF92D18605C002EE509 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				8472FA292D0CCB04008B7F06 /* QuestionFactory.swift */,
+				8471125D2D0D982F009D2AE6 /* QuestionFactoryProtocol.swift */,
+				8471125F2D0DA185009D2AE6 /* QuestionFactoryDelegate.swift */,
+				8428A3362D16D72C0082D9F3 /* StatisticServiceProtocol.swift */,
+				8428A33A2D16DC240082D9F3 /* StatisticService.swift */,
+				AD1ABAB12831907B00B3E448 /* AppDelegate.swift */,
+				AD1ABAB32831907B00B3E448 /* SceneDelegate.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		8F4738322848DE2A005DF65E /* Presentation */ = {
@@ -150,14 +145,11 @@
 			isa = PBXGroup;
 			children = (
 				8472FA2B2D0CCDF1008B7F06 /* Models */,
-				8472FA282D0CCAC4008B7F06 /* Serivces */,
-				AD1ABAB12831907B00B3E448 /* AppDelegate.swift */,
-				AD1ABAB32831907B00B3E448 /* SceneDelegate.swift */,
+				84E19CF92D18605C002EE509 /* Services */,
 				ADF0CF75283FDAA10075F54D /* Helpers */,
 				611342392B701CF6003FC2A4 /* Models */,
 				8F4738322848DE2A005DF65E /* Presentation */,
 				8F4738332848DE46005DF65E /* Resources */,
-				6113423A2B701CF8003FC2A4 /* Services */,
 			);
 			path = MovieQuiz;
 			sourceTree = "<group>";
@@ -207,7 +199,7 @@
 					};
 				};
 			};
-			buildConfigurationList = AD1ABAA92831907B00B3E448 /* Build configuration list for PBXProject "MovieQuiz_new" */;
+			buildConfigurationList = AD1ABAA92831907B00B3E448 /* Build configuration list for PBXProject "MovieQuiz" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -468,7 +460,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		AD1ABAA92831907B00B3E448 /* Build configuration list for PBXProject "MovieQuiz_new" */ = {
+		AD1ABAA92831907B00B3E448 /* Build configuration list for PBXProject "MovieQuiz" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AD1ABAC02831907F00B3E448 /* Debug */,
