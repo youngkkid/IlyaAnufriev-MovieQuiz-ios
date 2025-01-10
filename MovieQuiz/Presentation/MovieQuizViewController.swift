@@ -19,7 +19,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         return QuizStepViewModel(image: UIImage(data: model.image) ?? UIImage(), question: model.text, questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
-        }
+    }
     
     private func show(quiz step: QuizStepViewModel) {
         imageView.image = step.image
@@ -106,7 +106,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             self.questionFactory?.requestNextQuestion()
         }
         alertPresenter?.showAlert(result: model)
-                
+        
     }
     
     
@@ -132,7 +132,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         super.viewDidLoad()
         resetBorder()
         alertPresenter = ResultAlertPresenter(viewController: self)
-         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         statisticService = StatisticService()
         questionFactory?.loadData()
         showLoadingIndicator()
