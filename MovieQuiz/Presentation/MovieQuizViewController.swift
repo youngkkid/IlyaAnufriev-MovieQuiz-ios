@@ -1,22 +1,21 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
+final class MovieQuizViewController: UIViewController, MovieQuizProtocol,QuestionFactoryDelegate {
     // MARK: - Lifecycle
     private var alertPresenter: ResultAlertPresenter?
     
     private var correctAnswers = 0
 
     
-    private var questionFactory: QuestionFactoryProtocol?
+     private var questionFactory: QuestionFactoryProtocol?
     
     
     private var statisticService: StatisticServiceProtocol!
     
     private let presenter = MovieQuizPresenter()
     
-    private var currentQuestion: QuizQuestion?
     
-    private func show(quiz step: QuizStepViewModel) {
+     func show(quiz step: QuizStepViewModel) {
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
@@ -32,11 +31,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         
         DispatchQueue.main.asyncAfter(deadline:.now() + 1.0) {[weak self] in
             guard let self = self else {return}
-            self.showNextQuestionOrResult()
+            self.presenter.correctAnswers = self.correctAnswers
+            self.presenter.questionFactory = self.questionFactory
+            self.presenter.showNextQuestionOrResult() 
         }
     }
     
-    private func showNextQuestionOrResult () {
+     func showNextQuestionOrResult () {
        if  presenter.isLastQuestion() { let text = "Ваш результат: \(presenter.questionsAmount)/10"
             let bestGame = statisticService.bestGame
             let formater = DateFormatter()
@@ -47,17 +48,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             let viewModel = QuizResultsViewModel(title: "Этот раунд окончен!", text: "\(text)\n\(bestGameText)", buttonText: "Сыграть ещё раз")
             show(quiz: viewModel)
             statisticService.store(correct: correctAnswers, total: presenter.questionsAmount)
-            resetBorder()
-            changeState(of: true)
         } else { presenter.switchToNextQuestion()
             questionFactory?.requestNextQuestion()
-            resetBorder()
-            changeState(of: true)
         }
     }
     
     
-    private func show(quiz result: QuizResultsViewModel){
+     func show(quiz result: QuizResultsViewModel){
         let alert = AlertModel(title: result.title, message: result.text, buttonText: result.buttonText, completion: {[weak self] in
             guard let self = self else {return}
             
@@ -69,13 +66,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     
-    private func resetBorder() {
+     func resetBorder() {
         imageView.layer.borderColor = nil
         imageView.layer.borderWidth = 0
         imageView.layer.cornerRadius = 20
     }
     
-    private func changeState(of button: Bool) {
+     func changeState(of button: Bool) {
         yesButton.isEnabled = button
         noButton.isEnabled = button
     }
@@ -127,35 +124,29 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         super.viewDidLoad()
         resetBorder()
         alertPresenter = ResultAlertPresenter(viewController: self)
-        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+        let factory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+        questionFactory = factory
         statisticService = StatisticService()
         questionFactory?.loadData()
         showLoadingIndicator()
+        presenter.questionFactory = questionFactory
         presenter.viewController = self
+        presenter.view = self
+        
     }
     
     // MARK: - QuestionFactoryDelegate
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
-        guard let question = question else {return }
-        
-        currentQuestion = question
-        let viewModel = presenter.convert(model: question)
-        
-        DispatchQueue.main.async{ [weak self] in
-            self?.show(quiz: viewModel)
-        }
+        presenter.didReceiveNextQuestion(question: question)
         
     }
     
-    @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        presenter.currentQuestion = currentQuestion
-        presenter.yesButtonClicked()
+    @IBAction private func yesButtonClicked(_ sender: UIButton) {        presenter.yesButtonClicked()
     }
     
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        presenter.currentQuestion = currentQuestion
         presenter.noButtonClicked()
     }
 }

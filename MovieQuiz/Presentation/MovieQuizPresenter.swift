@@ -9,9 +9,12 @@ import UIKit
 
 final class MovieQuizPresenter {
     let questionsAmount: Int = 10
-    private var currentQuestionIndex: Int = 0
+    var currentQuestionIndex: Int = 0
     var currentQuestion: QuizQuestion?
     weak var viewController: MovieQuizViewController?
+    var questionFactory: QuestionFactoryProtocol?
+    var correctAnswers: Int = 0
+    weak var view: MovieQuizProtocol?
     
     func isLastQuestion() -> Bool {
         currentQuestionIndex == questionsAmount - 1
@@ -30,22 +33,58 @@ final class MovieQuizPresenter {
                                  question: model.text,
                                  questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
     }
-
     
-    func yesButtonClicked() {
-        
+    func didAnswer(isYes: Bool) {
         guard let currentQuestion = currentQuestion else {return}
-        let givenAnswer = true
+        
+        let givenAnswer = isYes
         
         viewController?.showAnswersResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
+
+    
+    func yesButtonClicked() {
+        didAnswer(isYes: true)
+    }
     
     func noButtonClicked() {
-        guard let currentQuestion = currentQuestion else {return}
+     didAnswer(isYes: false)
+    }
+    
+    func didReceiveNextQuestion(question: QuizQuestion?) {
+        guard let question = question else {return }
         
-        let givenAnswer = false
+        currentQuestion = question
+        let viewModel = self.convert(model: question)
         
-        viewController?.showAnswersResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+        DispatchQueue.main.async{ [weak self] in
+            self?.viewController?.show(quiz: viewModel)
+        }
+        
+    }
+    
+    func showNextQuestionOrResult() {
+        if self.isLastQuestion() {
+            let text = "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
+        
+            let viewModel = QuizResultsViewModel (title: "Этот раунд окончен!", text: text, buttonText: "Сыграть ещё раз")
+            viewController?.show(quiz: viewModel)
+            resetBorder()
+            changeState(of: true)
+        } else {
+            self.switchToNextQuestion()
+            questionFactory?.requestNextQuestion()
+            resetBorder()
+            changeState(of: true)
+        }
+    }
+    
+    func resetBorder() {
+        view?.resetBorder()
+    }
+    
+    func changeState(of button: Bool) {
+        view?.changeState(of: button)
     }
     
 }
