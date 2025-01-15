@@ -8,8 +8,7 @@
 import Foundation
 
 struct QuizQuestion {
-    // строка с названием фильма должна совпадать с названием картинки афиши из Assets
-    let image: String
+    let image: Data
     let text: String
     let correctAnswer: Bool
 }
