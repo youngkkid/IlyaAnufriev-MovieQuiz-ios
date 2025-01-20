@@ -8,7 +8,7 @@
 import XCTest
 @testable import MovieQuiz
 
-final class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
+final class MovieQuizViewControllerMock: UIViewController, MovieQuizViewControllerProtocol {
     func resetBorder() {}
     
     func changeState(of button: Bool) {}
@@ -29,7 +29,7 @@ final class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
 final class MovieQuizPresenterTests: XCTestCase {
     func testPresenterConvertModel() throws {
         let viewControllerMock = MovieQuizViewControllerMock()
-        let sut = MovieQuizPresenter(viewController: viewControllerMock)
+        let sut = MovieQuizPresenter(viewController: viewControllerMock )
         
         let emptyData = Data()
         let question = QuizQuestion(image: emptyData, text: "Question Text", correctAnswer: true)
