@@ -13,23 +13,25 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     private var currentQuestion: QuizQuestion?
     private weak var viewController: MovieQuizViewControllerProtocol?
     private var questionFactory: QuestionFactoryProtocol?
-    var correctAnswers: Int = 0
-    weak var view: MovieQuizViewControllerProtocol?
-    private let statisticService: StatisticServiceProtocol!
+    private var correctAnswers: Int = 0
+    private var statisticService: StatisticServiceProtocol?
+    private var alertPresenter: ResultAlertPresenter?
     
     init(viewController: MovieQuizViewControllerProtocol) {
         self.viewController = viewController
         
         statisticService = StatisticService()
-        
-        
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         questionFactory?.loadData()
         viewController.showLoadingIndicator()
+        if let viewController = viewController as? UIViewController {
+            alertPresenter = ResultAlertPresenter(viewController: viewController)
+        } else {
+            fatalError("Error")
+        }
     }
-
     
-    func isLastQuestion() -> Bool {
+    private func isLastQuestion() -> Bool {
         currentQuestionIndex == questionsAmount - 1
     }
     
@@ -39,11 +41,9 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         questionFactory?.requestNextQuestion()
     }
     
-    func switchToNextQuestion() {
+    private  func switchToNextQuestion() {
         currentQuestionIndex += 1
     }
-    
-
     
     func convert(model: QuizQuestion) -> QuizStepViewModel {
         return QuizStepViewModel(image: UIImage(data: model.image) ?? UIImage(),
@@ -51,39 +51,27 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
                                  questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
     }
     
-    func didAnswer(isCorrectAnswer: Bool) {
-        if isCorrectAnswer {
-                 correctAnswers += 1
-             }
-        proceedWithAnswer(isCorrect: isCorrectAnswer)
-    }
-    
     private func didAnswer(isYes: Bool) {
-           guard let currentQuestion = currentQuestion else {
-               return
-           }
-
-           let givenAnswer = isYes
-       
-        didAnswer(isCorrectAnswer: givenAnswer == currentQuestion.correctAnswer)
-       changeState(of: false)
-           
-       }
-
-    
-    func yesButtonClicked() {
-        didAnswer(isYes: true)
+        guard let currentQuestion = currentQuestion else {
+            return}
+        let isCorrectAnswer = isYes == currentQuestion.correctAnswer
+        if isCorrectAnswer {
+            correctAnswers  += 1
+        }
+        proceedWithAnswer(isCorrect: isCorrectAnswer)
+        changeState(of: false)
     }
     
-    func noButtonClicked() {
-     didAnswer(isYes: false)
+    
+    func isButtonClicked(isYes: Bool) {
+        didAnswer(isYes: isYes)
     }
-        
-    func proceedToNextQuestionOrResult() {
+    
+    private func proceedToNextQuestionOrResult() {
         if self.isLastQuestion() {
             let resultMessage = makeResultsMessage()
             let text = correctAnswers == self.questionsAmount ? "Поздравляем, вы ответили на 10 из 10!\n\(resultMessage)" : "Вы ответили на \(correctAnswers) из 10. \n\(resultMessage)"
-        
+            
             let viewModel = QuizResultsViewModel (title: "Этот раунд окончен!", text: text, buttonText: "Сыграть ещё раз")
             viewController?.show(quiz: viewModel)
             resetBorder()
@@ -96,14 +84,13 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         }
     }
     
-    func resetBorder() {
-        view?.resetBorder()
+    private func resetBorder() {
+        viewController?.resetBorder()
     }
     
-    func changeState(of button: Bool) {
-        view?.changeState(of: button)
+    private func changeState(of button: Bool) {
+        viewController?.changeState(of: button)
     }
-    
     
     // MARK: - QuestionFactoryDelegate
     
@@ -123,27 +110,26 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         viewController?.showNetworkError(message: message)
     }
     
-    
     func didLoadDataFromServer() {
         viewController?.hideLoadingIndicator()
         questionFactory?.requestNextQuestion()
         
     }
     
-    func makeResultsMessage() -> String {
-        statisticService.store(correct: correctAnswers, total: questionsAmount)
+    private func makeResultsMessage() -> String {
+        statisticService?.store(correct: correctAnswers, total: questionsAmount)
         
-        let bestGame = statisticService.bestGame
+        let bestGame = statisticService?.bestGame
         let formater = DateFormatter()
         formater.dateFormat = "dd.MM.YY HH:mm"
-        let formattedDate = formater.string(from: bestGame.date)
-        let bestGameText = "Количество сыгранных квизов: \(statisticService.gamesCount)\nРекорд: \(bestGame.correct)/10 (\(formattedDate))\nСреднаяя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
+        let formattedDate = formater.string(from: bestGame?.date ?? Date())
+        let bestGameText = "Количество сыгранных квизов: \( statisticService?.gamesCount ?? 0)\nРекорд: \(bestGame?.correct ?? 0)/10 (\(formattedDate))\nСредняя точность: \(String(format: "%.2f", statisticService?.totalAccuracy ?? 0.0))%"
         
         return bestGameText
         
     }
     
-    func proceedWithAnswer(isCorrect: Bool) {
+    private func proceedWithAnswer(isCorrect: Bool) {
         
         viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
         
@@ -151,6 +137,21 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             guard let self = self else { return }
             self.proceedToNextQuestionOrResult()
         }
+    }
+    
+    func showAlert(for result: QuizResultsViewModel) {
+        let alert = AlertModel(title: result.title, message: result.text, buttonText: result.buttonText) {[weak self] in
+            guard let self = self else {return}
+            self.restartGame()
+        }
+        alertPresenter?.showAlert(result: alert)
+    }
+    
+    func showNetworkError(message: String) {
+        let alert = AlertModel(title: "Ошибка", message: message, buttonText: "Попробовать ещё раз") { [weak self] in
+            self?.restartGame()
+        }
+        alertPresenter?.showAlert(result: alert)
     }
 }
 
